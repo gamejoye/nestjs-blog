@@ -8,7 +8,7 @@ import { AccountsService } from '../accounts/accounts.service';
 import { IAddAcountDto } from '../accounts/dto/add-account.dto';
 import { GITHUB } from 'src/common/constants/platforms';
 import { RedisCliService } from '../redis-cli/redis-cli.service';
-import config from 'src/common/config/github-passport';
+import { EnvConfigService } from '../env-config/env-config.service';
 
 @Controller('auth/github')
 @UseGuards(GithubAuthGuard)
@@ -17,6 +17,7 @@ export class GithubAuthController {
     private githubAuthService: GithubAuthService,
     private accountsService: AccountsService,
     private redisCliService: RedisCliService,
+    private envConfigService: EnvConfigService,
   ) {}
 
   @Get()
@@ -49,8 +50,10 @@ export class GithubAuthController {
     }
     const accountId = account.id;
     await this.redisCliService.setAccountIdByToken(accessToken, accountId);
+    const GITHUB_FRONT_END_CALLBACK_URL =
+      this.envConfigService.getGithubConfig().githubFrontEndCallbackUrl;
     res.redirect(
-      `${config.GITHUB_FRONT_END_CALLBACK_URL}?uid=${userDto.accessToken}&&state=succeed`,
+      `${GITHUB_FRONT_END_CALLBACK_URL}?uid=${userDto.accessToken}&&state=succeed`,
     );
   }
 }
