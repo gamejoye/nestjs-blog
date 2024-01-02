@@ -15,6 +15,7 @@ import { AccountsModule } from './modules/accounts/accounts.module';
 import { RedisCliModule } from './modules/redis-cli/redis-cli.module';
 import { GithubAuthMiddleWare } from './common/middlewares/github-auth.middleware';
 import { AdminAuthModule } from './modules/admin-auth/admin-auth.module';
+import { EnvConfigModule } from './modules/env-config/env-config.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { AdminAuthModule } from './modules/admin-auth/admin-auth.module';
     RedisCliModule,
     GithubAuthModule,
     AdminAuthModule,
+    EnvConfigModule,
   ],
 })
 export class AppModule implements NestModule {

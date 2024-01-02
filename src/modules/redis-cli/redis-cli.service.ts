@@ -1,16 +1,17 @@
 import { Injectable, OnModuleDestroy } from '@nestjs/common';
 import { Redis } from 'ioredis';
 import { TOKEN_EXPIRATION, TOKEN_PREFIX } from 'src/common/constants/redis';
-import config from 'src/common/config/redis-cli';
+import { EnvConfigService } from '../env-config/env-config.service';
 
 @Injectable()
 export class RedisCliService implements OnModuleDestroy {
   private readonly cli: Redis;
-  constructor() {
+  constructor(private envConfigService: EnvConfigService) {
+    const config = envConfigService.getRedisConfig();
     this.cli = new Redis({
-      host: config.REDIS_HOST,
-      port: config.REDIS_PORT,
-      db: config.REDIS_DB,
+      host: config.host,
+      port: config.port,
+      db: config.db,
       retryStrategy: (times) => {
         return Math.min(times * 50, 2000);
       },

@@ -2,14 +2,11 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { HttpExceptionFilter } from './common/filters/http-exception.filters';
-import serverConfig from 'src/common/config/server';
-import * as dotenv from 'dotenv';
-dotenv.config();
-
-const port = serverConfig.PORT;
+import { EnvConfigService } from './modules/env-config/env-config.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const config = app.get(EnvConfigService).getWebServerConfig();
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
@@ -18,12 +15,12 @@ async function bootstrap() {
   );
   app.useGlobalFilters(new HttpExceptionFilter());
   app.enableCors({
-    origin: serverConfig.CORS_ORIGINS,
+    origin: config.origins,
     exposedHeaders: ['X-Total-Count'],
   });
-  console.log('server running on port: ', port);
-  console.log('corsOrigin: ', serverConfig.CORS_ORIGINS);
+  console.log('server running on port: ', config.port);
+  console.log('corsOrigin: ', config.origins);
   console.log('env: ', process.env.NODE_ENV);
-  await app.listen(port);
+  await app.listen(config.port);
 }
 bootstrap();
