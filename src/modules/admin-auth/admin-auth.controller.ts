@@ -11,15 +11,18 @@ import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
 import { Information } from '../information/entities/information.entity';
 import { TOKEN_EXPIRATION } from 'src/common/constants/redis';
+import { EnvConfigService } from '../env-config/env-config.service';
 
 @Controller('admin-auth')
 export class AdminAuthController {
-  constructor(private informationService: InformationService) { }
+  constructor(
+    private informationService: InformationService,
+    private envConfigService: EnvConfigService,
+  ) {}
 
   @Post('login')
   async login(@Body() { name, password }: ILoginDto) {
     const information = await this.informationService.getByName(name);
-    console.log(information);
     const passwordCorrect =
       information === null
         ? false
@@ -30,9 +33,11 @@ export class AdminAuthController {
         HttpStatus.UNAUTHORIZED,
       );
     }
-    const token = jwt.sign({ name }, process.env.SECRET, {
-      expiresIn: TOKEN_EXPIRATION,
-    });
+    const token = jwt.sign(
+      { name },
+      this.envConfigService.getJwtConfig().secret,
+      { expiresIn: TOKEN_EXPIRATION },
+    );
     const json: Partial<Information & { token: string }> = {
       name: information.name,
       avatarUrl: information.avatarUrl,
