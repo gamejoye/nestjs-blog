@@ -7,6 +7,7 @@ import {
   ParseIntPipe,
   Post,
   Put,
+  Query,
   Res,
   UseGuards,
 } from '@nestjs/common';
@@ -16,15 +17,20 @@ import { Response } from 'express';
 import { setXTotalCount } from 'src/common/utils/response-transform';
 import { IUpdateFolderDto } from './dto/update-folder.dto';
 import { AdminAuthGuard } from 'src/common/guards/admin-token-auto.guard';
+import { IGetPagingQueryDto } from 'src/common/types/base.dto';
 
 @Controller('folders')
 export class FoldersController {
   constructor(private foldersService: FoldersService) {}
 
   @Get()
-  async getAllFolders(@Res({ passthrough: true }) res: Response) {
-    const folders = await this.foldersService.getAll();
-    setXTotalCount(res, folders.length);
+  async getFoldersByPaging(
+    @Query() query: IGetPagingQueryDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const folders = await this.foldersService.getByPaging(query);
+    const count = await this.foldersService.countAll();
+    setXTotalCount(res, count);
     return folders;
   }
 

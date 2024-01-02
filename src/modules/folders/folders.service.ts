@@ -5,13 +5,14 @@ import { Repository } from 'typeorm';
 import { Folder } from './entities/folder.entity';
 import { FOLDER_REPOSITORY } from 'src/common/constants/providers';
 import { IUpdateFolderDto } from './dto/update-folder.dto';
+import { IGetPagingQueryDto } from 'src/common/types/base.dto';
 
 @Injectable()
 export class FoldersService {
   constructor(
     @Inject(FOLDER_REPOSITORY)
     private folderRepository: Repository<Folder>,
-  ) {}
+  ) { }
   async update(updateFolderDto: IUpdateFolderDto) {
     const partialFolder: Partial<Folder> = {
       id: updateFolderDto.id,
@@ -41,6 +42,21 @@ export class FoldersService {
       },
     });
     return folder;
+  }
+  async countAll() {
+    return await this.folderRepository.count();
+  }
+  async getByPaging(query: IGetPagingQueryDto) {
+    const amount = query._end - query._start;
+    const skip = query._start;
+    const { _sort: sort, _order: order } = query;
+    const folders = await this.folderRepository
+      .createQueryBuilder('folder')
+      .orderBy(`folder.${sort}`, order)
+      .skip(skip)
+      .take(amount)
+      .getMany();
+    return folders;
   }
   async getAll() {
     const folders = await this.folderRepository.find();

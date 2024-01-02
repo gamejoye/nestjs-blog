@@ -7,6 +7,7 @@ import {
   ParseIntPipe,
   Post,
   Put,
+  Query,
   Res,
   UseGuards,
 } from '@nestjs/common';
@@ -16,15 +17,20 @@ import { setXTotalCount } from 'src/common/utils/response-transform';
 import { IUpdateTagDto } from './dto/update-tag.dto';
 import { AdminAuthGuard } from 'src/common/guards/admin-token-auto.guard';
 import { IAddTagDto } from './dto/add-tag.dto';
+import { IGetPagingQueryDto } from 'src/common/types/base.dto';
 
 @Controller('tags')
 export class TagsController {
   constructor(private tagsService: TagsService) {}
 
   @Get()
-  async getAllTags(@Res({ passthrough: true }) res: Response) {
-    const tags = await this.tagsService.getAll();
-    setXTotalCount(res, tags.length);
+  async getAllTags(
+    @Query() query: IGetPagingQueryDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const tags = await this.tagsService.getByPaging(query);
+    const count = await this.tagsService.countAll();
+    setXTotalCount(res, count);
     return tags;
   }
 

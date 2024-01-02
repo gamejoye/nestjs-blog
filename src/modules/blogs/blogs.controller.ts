@@ -7,6 +7,7 @@ import {
   ParseIntPipe,
   Post,
   Put,
+  Query,
   Res,
   UseGuards,
 } from '@nestjs/common';
@@ -18,6 +19,7 @@ import { Response } from 'express';
 import { setXTotalCount } from 'src/common/utils/response-transform';
 import { IUpdateBlogDto } from './dto/update-blog.dto';
 import { AdminAuthGuard } from 'src/common/guards/admin-token-auto.guard';
+import { IGetPagingQueryDto } from 'src/common/types/base.dto';
 
 @Controller('blogs')
 export class BlogsController {
@@ -27,15 +29,17 @@ export class BlogsController {
   ) {}
 
   @Get()
-  async getAllBlogs(
+  async getBlogsByPaging(
+    @Query() query: IGetPagingQueryDto,
     @Res({ passthrough: true }) res: Response,
   ): Promise<Blog[]> {
-    const blogs = await this.blogService.getAll();
+    const blogs = await this.blogService.getByPaging(query);
     const counts = await Promise.all(
       blogs.map((blog) => this.blogsCommentsService.countByBlogId(blog.id)),
     );
     blogs.forEach((blog, index) => (blog.commentsCount = counts[index]));
-    setXTotalCount(res, blogs.length);
+    const count = await this.blogService.countAll();
+    setXTotalCount(res, count);
     return blogs;
   }
 

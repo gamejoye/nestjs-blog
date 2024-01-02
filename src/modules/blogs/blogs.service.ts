@@ -7,6 +7,7 @@ import { Blog } from './entities/blog.entity';
 import { Folder } from '../folders/entities/folder.entity';
 import { Tag } from '../tags/entities/tag.entity';
 import { IUpdateBlogDto } from './dto/update-blog.dto';
+import { IGetPagingQueryDto } from 'src/common/types/base.dto';
 
 // TODO 处理角色认证
 @Injectable()
@@ -102,11 +103,24 @@ export class BlogsService {
     });
   }
 
-  async getAll() {
-    const blogs = await this.blogRepository.find({
-      relations: ['tags', 'folders'],
-    });
+  async getByPaging(paingQuery: IGetPagingQueryDto) {
+    const amount = paingQuery._end - paingQuery._start;
+    const skip = paingQuery._start;
+    const { _sort: sort, _order: order } = paingQuery;
+    const blogs = await this.blogRepository
+      .createQueryBuilder('blog')
+      .leftJoinAndSelect('blog.tags', 'tag')
+      .leftJoinAndSelect('blog.folders', 'folder')
+      .orderBy(`blog.${sort}`, order)
+      .skip(skip)
+      .take(amount)
+      .getMany();
     return blogs;
+  }
+
+  async countAll() {
+    const count = await this.blogRepository.count();
+    return count;
   }
 
   async getById(blogId: number) {

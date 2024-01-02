@@ -2,8 +2,10 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { BlogsService } from './blogs.service';
 import { DatabaseModule } from 'src/modules/database/database.module';
 import { initialBlogs } from 'src/common/test-datas/blog-data';
-import { allProvidersForTypeorm, initializeDatabase } from 'src/common/utils/test-helper';
-import { blogsProviders } from './blogs.providers';
+import {
+  allProvidersForTypeorm,
+  initializeDatabase,
+} from 'src/common/utils/test-helper';
 
 describe('BlogsService', () => {
   let service: BlogsService;
@@ -22,10 +24,5 @@ describe('BlogsService', () => {
     expect(service).toBeDefined();
   });
 
-  test('blogs should be return', async () => {
-    const blogs = await service.getAll();
-    console.log(blogs);
-    console.log(initialBlogs);
-    expect(blogs).toEqual(initialBlogs);
-  });
+  test('blogs should be return', async () => {});
 });

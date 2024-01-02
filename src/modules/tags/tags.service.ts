@@ -5,6 +5,7 @@ import { TAG_REPOSITORY } from 'src/common/constants/providers';
 import { Tag } from './entities/tag.entity';
 import { Repository } from 'typeorm';
 import { IUpdateTagDto } from './dto/update-tag.dto';
+import { IGetPagingQueryDto } from 'src/common/types/base.dto';
 
 @Injectable()
 export class TagsService {
@@ -12,6 +13,21 @@ export class TagsService {
     @Inject(TAG_REPOSITORY)
     private tagRepository: Repository<Tag>,
   ) {}
+  async countAll() {
+    return await this.tagRepository.count();
+  }
+  async getByPaging(query: IGetPagingQueryDto) {
+    const amount = query._end - query._start;
+    const skip = query._start;
+    const { _sort: sort, _order: order } = query;
+    const tags = await this.tagRepository
+      .createQueryBuilder('tag')
+      .orderBy(`tag.${sort}`, order)
+      .skip(skip)
+      .take(amount)
+      .getMany();
+    return tags;
+  }
   async getAll() {
     const tags = await this.tagRepository.find();
     return tags;
