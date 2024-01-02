@@ -5,7 +5,7 @@ import { Request, Response } from 'express';
 
 @Injectable()
 export class BearerTokenAuthGuard implements CanActivate {
-  constructor(private redisCliService: RedisCliService) { }
+  constructor(private redisCliService: RedisCliService) {}
 
   async canActivate(host: ExecutionContext): Promise<boolean> {
     const ctx = host.switchToHttp();

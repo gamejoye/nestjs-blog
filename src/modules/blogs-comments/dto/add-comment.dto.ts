@@ -8,7 +8,7 @@ import {
 import { BlogComment } from '../entities/blog-comment.entity';
 import { Type } from 'class-transformer';
 
-class IAccountForAddCommentDto{
+class IAccountForAddCommentDto {
   @IsInt()
   id: number;
 }

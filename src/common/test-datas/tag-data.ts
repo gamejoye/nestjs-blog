@@ -55,7 +55,7 @@ export const tag7: Tag = {
   name: '算法',
   createTime: getCurrentDatetime(),
   deleted: false,
-  blogs: [blog2, blog3]
+  blogs: [blog2, blog3],
 };
 
 export const initialTags = [tag1, tag2, tag3, tag4, tag5, tag6, tag7];
