@@ -24,8 +24,9 @@
 
 ## 待改进
 
-1. 简化配置信息
-2. 合并admin-auth和information模块
+1. service接口定义
+2. 合并admin-auth和information模块（说明： 包括数据表、service、模块）
+3. 支持博客、标签、文件夹的分页查询
 
 ## 贡献指南
 
