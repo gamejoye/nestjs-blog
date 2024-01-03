@@ -8,6 +8,7 @@ import { Folder } from '../folders/entities/folder.entity';
 import { Tag } from '../tags/entities/tag.entity';
 import { IUpdateBlogDto } from './dto/update-blog.dto';
 import { IGetPagingQueryDto } from 'src/common/types/base.dto';
+import { IGetBlogsQueryDto } from './dto/get-blogs.dto';
 
 // TODO 处理角色认证
 @Injectable()
@@ -103,19 +104,27 @@ export class BlogsService {
     });
   }
 
-  async getByPaging(paingQuery: IGetPagingQueryDto) {
+  async getByPagingAndFilter(
+    paingQuery: IGetPagingQueryDto & IGetBlogsQueryDto,
+  ) {
     const amount = paingQuery._end - paingQuery._start;
     const skip = paingQuery._start;
     const { _sort: sort, _order: order } = paingQuery;
-    const blogs = await this.blogRepository
+    const query = this.blogRepository
       .createQueryBuilder('blog')
       .leftJoinAndSelect('blog.tags', 'tag')
-      .leftJoinAndSelect('blog.folders', 'folder')
-      .orderBy(`blog.${sort}`, order)
-      .skip(skip)
-      .take(amount)
-      .getMany();
-    return blogs;
+      .leftJoinAndSelect('blog.folders', 'folder');
+    if (paingQuery.q !== undefined) {
+      query.andWhere(`blog.content like :q`, { q: `%${paingQuery.q}%` });
+    }
+    if (paingQuery.folder !== undefined) {
+      query.andWhere(`folder.name = :folder`, { folder: paingQuery.folder });
+    }
+    if (paingQuery.tag !== undefined) {
+      query.andWhere(`tag.name = :tag`, { tag: paingQuery.tag });
+    }
+    query.orderBy(`blog.${sort}`, order).skip(skip).take(amount);
+    return query.getMany();
   }
 
   async countAll() {

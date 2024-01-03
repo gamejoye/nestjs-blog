@@ -34,6 +34,12 @@ export class TagsController {
     return tags;
   }
 
+  @Get('count')
+  async getBlogsTotoalCount() {
+    const total = await this.tagsService.countAll();
+    return total;
+  }
+
   @Get(':id')
   async getTagById(@Param('id', ParseIntPipe) id: number) {
     const tag = await this.tagsService.getById(id);

@@ -34,6 +34,12 @@ export class FoldersController {
     return folders;
   }
 
+  @Get('count')
+  async getBlogsTotoalCount() {
+    const total = await this.foldersService.countAll();
+    return total;
+  }
+
   @Get(':id')
   async getFolderById(@Param('id', ParseIntPipe) id: number) {
     const folder = await this.foldersService.getById(id);

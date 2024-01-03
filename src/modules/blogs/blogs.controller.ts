@@ -19,7 +19,7 @@ import { Response } from 'express';
 import { setXTotalCount } from 'src/common/utils/response-transform';
 import { IUpdateBlogDto } from './dto/update-blog.dto';
 import { AdminAuthGuard } from 'src/common/guards/admin-token-auto.guard';
-import { IGetPagingQueryDto } from 'src/common/types/base.dto';
+import { IGetBlogsQueryDto } from './dto/get-blogs.dto';
 
 @Controller('blogs')
 export class BlogsController {
@@ -30,10 +30,10 @@ export class BlogsController {
 
   @Get()
   async getBlogsByPaging(
-    @Query() query: IGetPagingQueryDto,
+    @Query() query: IGetBlogsQueryDto,
     @Res({ passthrough: true }) res: Response,
   ): Promise<Blog[]> {
-    const blogs = await this.blogService.getByPaging(query);
+    const blogs = await this.blogService.getByPagingAndFilter(query);
     const counts = await Promise.all(
       blogs.map((blog) => this.blogsCommentsService.countByBlogId(blog.id)),
     );
@@ -41,6 +41,12 @@ export class BlogsController {
     const count = await this.blogService.countAll();
     setXTotalCount(res, count);
     return blogs;
+  }
+
+  @Get('count')
+  async getBlogsTotoalCount() {
+    const total = await this.blogService.countAll();
+    return total;
   }
 
   @Get(':id')
