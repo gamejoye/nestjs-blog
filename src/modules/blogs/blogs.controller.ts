@@ -38,14 +38,14 @@ export class BlogsController {
       blogs.map((blog) => this.blogsCommentsService.countByBlogId(blog.id)),
     );
     blogs.forEach((blog, index) => (blog.commentsCount = counts[index]));
-    const count = await this.blogService.countAll();
+    const count = await this.blogService.countAll(query);
     setXTotalCount(res, count);
     return blogs;
   }
 
   @Get('count')
   async getBlogsTotoalCount() {
-    const total = await this.blogService.countAll();
+    const total = await this.blogService.countAll({});
     return total;
   }
 

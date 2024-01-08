@@ -2,13 +2,13 @@ import { Inject, Injectable } from '@nestjs/common';
 import { IAddBlogDto } from './dto/add-blog.dto';
 import { getCurrentDatetime } from 'src/common/utils/dayjs-helper';
 import { BLOG_REPOSITORY, DATA_SOURCE } from 'src/common/constants/providers';
-import { DataSource, DeepPartial, Repository } from 'typeorm';
+import { DataSource, DeepPartial, Like, Repository } from 'typeorm';
 import { Blog } from './entities/blog.entity';
 import { Folder } from '../folders/entities/folder.entity';
 import { Tag } from '../tags/entities/tag.entity';
 import { IUpdateBlogDto } from './dto/update-blog.dto';
-import { IGetPagingQueryDto } from 'src/common/types/base.dto';
 import { IGetBlogsQueryDto } from './dto/get-blogs.dto';
+import { IGetPagingQueryDto } from 'src/common/types/base.dto';
 
 // TODO 处理角色认证
 @Injectable()
@@ -104,9 +104,7 @@ export class BlogsService {
     });
   }
 
-  async getByPagingAndFilter(
-    paingQuery: IGetPagingQueryDto & IGetBlogsQueryDto,
-  ) {
+  async getByPagingAndFilter(paingQuery: IGetBlogsQueryDto) {
     const amount = paingQuery._end - paingQuery._start;
     const skip = paingQuery._start;
     const { _sort: sort, _order: order } = paingQuery;
@@ -127,9 +125,21 @@ export class BlogsService {
     return query.getMany();
   }
 
-  async countAll() {
-    const count = await this.blogRepository.count();
-    return count;
+  async countAll(query: Omit<IGetBlogsQueryDto, keyof IGetPagingQueryDto>) {
+    const select = this.blogRepository
+      .createQueryBuilder('blog')
+      .leftJoin('blog.folders', 'folder')
+      .leftJoin('blog.tags', 'tag');
+    if (query.q !== undefined) {
+      select.andWhere('blog.content like :q', { q: `%${query.q}%` });
+    }
+    if (query.folder !== undefined) {
+      select.andWhere('folder.name = :folder', { folder: query.folder });
+    }
+    if (query.tag !== undefined) {
+      select.andWhere('tag.name = :tag', { tag: query.tag });
+    }
+    return await select.getCount();
   }
 
   async getById(blogId: number) {
@@ -175,6 +185,3 @@ export class BlogsService {
     throw new Error('blog not found');
   }
 }
-
-// @Injectable()
-// export class BlogsService {}
