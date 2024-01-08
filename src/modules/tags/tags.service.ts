@@ -6,9 +6,10 @@ import { Tag } from './entities/tag.entity';
 import { Repository } from 'typeorm';
 import { IUpdateTagDto } from './dto/update-tag.dto';
 import { IGetPagingQueryDto } from 'src/common/types/base.dto';
+import { ITagsService } from './interfaces/tags.service.interface';
 
 @Injectable()
-export class TagsService {
+export class TagsService implements ITagsService {
   constructor(
     @Inject(TAG_REPOSITORY)
     private tagRepository: Repository<Tag>,
@@ -26,10 +27,6 @@ export class TagsService {
       .skip(skip)
       .take(amount)
       .getMany();
-    return tags;
-  }
-  async getAll() {
-    const tags = await this.tagRepository.find();
     return tags;
   }
   async getById(id: number) {
@@ -67,6 +64,7 @@ export class TagsService {
       };
       Object.assign(tag, partialTag);
       await this.tagRepository.save(tag);
+      return true;
     }
     throw new Error();
   }

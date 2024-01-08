@@ -6,13 +6,14 @@ import { Folder } from './entities/folder.entity';
 import { FOLDER_REPOSITORY } from 'src/common/constants/providers';
 import { IUpdateFolderDto } from './dto/update-folder.dto';
 import { IGetPagingQueryDto } from 'src/common/types/base.dto';
+import { IFoldersService } from './interfaces/folders.service.interface';
 
 @Injectable()
-export class FoldersService {
+export class FoldersService implements IFoldersService {
   constructor(
     @Inject(FOLDER_REPOSITORY)
     private folderRepository: Repository<Folder>,
-  ) { }
+  ) {}
   async update(updateFolderDto: IUpdateFolderDto) {
     const partialFolder: Partial<Folder> = {
       id: updateFolderDto.id,
@@ -32,6 +33,7 @@ export class FoldersService {
       Object.assign(folder, partialFolder);
       console.log('folder: ', folder);
       await this.folderRepository.save(folder);
+      return true;
     }
     throw new Error('folder not found');
   }
@@ -56,10 +58,6 @@ export class FoldersService {
       .skip(skip)
       .take(amount)
       .getMany();
-    return folders;
-  }
-  async getAll() {
-    const folders = await this.folderRepository.find();
     return folders;
   }
   async getByBlogIds(blogIds: number[]) {

@@ -9,10 +9,11 @@ import { Tag } from '../tags/entities/tag.entity';
 import { IUpdateBlogDto } from './dto/update-blog.dto';
 import { IGetBlogsQueryDto } from './dto/get-blogs.dto';
 import { IGetPagingQueryDto } from 'src/common/types/base.dto';
+import { IBlogService } from './interfaces/blogs.service.interface';
 
 // TODO 处理角色认证
 @Injectable()
-export class BlogsService {
+export class BlogsService implements IBlogService {
   constructor(
     @Inject(DATA_SOURCE) private dataSouce: DataSource,
     @Inject(BLOG_REPOSITORY) private blogRepository: Repository<Blog>,
@@ -64,7 +65,7 @@ export class BlogsService {
     });
   }
 
-  async add(addBlogDto: IAddBlogDto): Promise<Partial<Blog>> {
+  async add(addBlogDto: IAddBlogDto) {
     return await this.dataSouce.transaction(async (manager) => {
       const createTime = getCurrentDatetime();
       const partialBlog: Partial<Blog> = {

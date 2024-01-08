@@ -1,39 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-
-type IDatabaseConfig = {
-  host: string;
-  port: number;
-  type: 'mysql';
-  username: string;
-  password: string;
-  database: string;
-};
-
-type IWebServerConfig = {
-  port: number;
-  origins: string[];
-};
-
-type IRedisConfig = {
-  host: string;
-  port: number;
-  db: number;
-};
-
-type IGithubConfig = {
-  githubClientId: string;
-  githubClientSecret: string;
-  githubCallbackUrl: string;
-  githubFrontEndCallbackUrl: string;
-};
-
-type IJwtConfig = {
-  secret: string;
-};
+import { IEnvConfigService } from './interfaces/env-config.service.interface';
+import {
+  IDatabaseConfig,
+  IGithubConfig,
+  IJwtConfig,
+  IRedisConfig,
+  IWebServerConfig,
+} from 'src/common/types/base.type';
 
 @Injectable()
-export class EnvConfigService {
+export class EnvConfigService implements IEnvConfigService {
   constructor(private configService: ConfigService) {}
 
   getDatabaseConfig(): IDatabaseConfig {

@@ -2,9 +2,10 @@ import { Injectable, OnModuleDestroy } from '@nestjs/common';
 import { Redis } from 'ioredis';
 import { TOKEN_EXPIRATION, TOKEN_PREFIX } from 'src/common/constants/redis';
 import { EnvConfigService } from '../env-config/env-config.service';
+import { IRedisCliService } from './interfaces/redis-cli.service.interface';
 
 @Injectable()
-export class RedisCliService implements OnModuleDestroy {
+export class RedisCliService implements OnModuleDestroy, IRedisCliService {
   private readonly cli: Redis;
   constructor(private envConfigService: EnvConfigService) {
     const config = envConfigService.getRedisConfig();
@@ -26,7 +27,9 @@ export class RedisCliService implements OnModuleDestroy {
     TTL = TOKEN_EXPIRATION,
   ) {
     const tokenKey = TOKEN_PREFIX + token;
-    await this.cli.set(tokenKey, accountId + '', 'EX', TTL);
+    const status = await this.cli.set(tokenKey, accountId + '', 'EX', TTL);
+    if (status !== 'OK') return false;
+    return true;
   }
 
   async getAccountIdByToken(token: string): Promise<number | null> {

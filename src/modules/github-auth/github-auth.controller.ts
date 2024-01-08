@@ -1,5 +1,4 @@
 import { Controller, Get, Res, UseGuards } from '@nestjs/common';
-import { GithubAuthService } from './github-auth.service';
 import { GithubAuthGuard } from './github-auth.guard';
 import { IAuthGithubCallbackDto } from './dto/auth-github-callback.dto';
 import { GetUser } from './decorators/get-user.decorator';
@@ -10,11 +9,10 @@ import { GITHUB } from 'src/common/constants/platforms';
 import { RedisCliService } from '../redis-cli/redis-cli.service';
 import { EnvConfigService } from '../env-config/env-config.service';
 
-@Controller('auth/github')
 @UseGuards(GithubAuthGuard)
+@Controller('auth/github')
 export class GithubAuthController {
   constructor(
-    private githubAuthService: GithubAuthService,
     private accountsService: AccountsService,
     private redisCliService: RedisCliService,
     private envConfigService: EnvConfigService,

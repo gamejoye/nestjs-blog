@@ -9,9 +9,10 @@ import { PlatformProfile } from '../platform-profiles/entities/platform-profile.
 import { IAddAcountDto } from './dto/add-account.dto';
 import { getCurrentDatetime } from 'src/common/utils/dayjs-helper';
 import { IPlatform } from 'src/common/types/base.type';
+import { IAccountsService } from './interfaces/accounts.service.interface';
 
 @Injectable()
-export class AccountsService {
+export class AccountsService implements IAccountsService {
   constructor(
     @Inject(ACCOUNT_REPOSITORY) private accountRepository: Repository<Account>,
     @Inject(PLATFORM_PROFILE_REPOSITORY)

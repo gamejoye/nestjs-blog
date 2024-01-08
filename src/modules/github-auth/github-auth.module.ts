@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport';
 import { GithubStrategy } from './github-auth.strategy';
 import { GithubAuthController } from './github-auth.controller';
-import { GithubAuthService } from './github-auth.service';
 import { AccountsModule } from '../accounts/accounts.module';
 import { RedisCliModule } from '../redis-cli/redis-cli.module';
 
@@ -13,6 +12,6 @@ import { RedisCliModule } from '../redis-cli/redis-cli.module';
     RedisCliModule,
   ],
   controllers: [GithubAuthController],
-  providers: [GithubStrategy, GithubAuthService],
+  providers: [GithubStrategy],
 })
 export class GithubAuthModule {}

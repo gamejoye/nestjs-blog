@@ -4,9 +4,10 @@ import { Repository } from 'typeorm';
 import { PlatformProfile } from './entities/platform-profile.entity';
 import { IAuthGithubCallbackDto } from '../github-auth/dto/auth-github-callback.dto';
 import { GITHUB } from 'src/common/constants/platforms';
+import { IPlatformProfilesService } from './interfaces/platform-profiles.service.interface';
 
 @Injectable()
-export class PlatformProfilesService {
+export class PlatformProfilesService implements IPlatformProfilesService {
   constructor(
     @Inject(PLATFORM_PROFILE_REPOSITORY)
     private platformProfileRepository: Repository<PlatformProfile>,

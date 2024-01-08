@@ -4,9 +4,10 @@ import { getCurrentDatetime } from 'src/common/utils/dayjs-helper';
 import { DeepPartial, Repository } from 'typeorm';
 import { BlogComment } from './entities/blog-comment.entity';
 import { BLOG_COMMENT_REPOSITORY } from 'src/common/constants/providers';
+import { IBlogsCommentsService } from './interfaces/blogs-comments.service.interface';
 
 @Injectable()
-export class BlogsCommentsService {
+export class BlogsCommentsService implements IBlogsCommentsService {
   constructor(
     @Inject(BLOG_COMMENT_REPOSITORY)
     private blogCommentRepository: Repository<BlogComment>,
