@@ -5,6 +5,7 @@ import { DeepPartial, Repository } from 'typeorm';
 import { BlogComment } from './entities/blog-comment.entity';
 import { BLOG_COMMENT_REPOSITORY } from 'src/common/constants/providers';
 import { IBlogsCommentsService } from './interfaces/blogs-comments.service.interface';
+import { IUpdateBlogCommentDto } from './dto/update.comment.dto';
 
 @Injectable()
 export class BlogsCommentsService implements IBlogsCommentsService {
@@ -40,13 +41,15 @@ export class BlogsCommentsService implements IBlogsCommentsService {
     return await query.getMany();
   }
 
-  async add(addCommentDto: IAddCommentDto) {
+  async add(addCommentDto: IAddCommentDto, accountId: number) {
     const createTime = getCurrentDatetime();
     const partialComment: DeepPartial<BlogComment> = {
       createTime,
       deleted: false,
       blog: addCommentDto.blog,
-      account: addCommentDto.account,
+      account: {
+        id: accountId,
+      },
       parentComment: addCommentDto.parentComment,
       content: addCommentDto.content,
     };
@@ -79,18 +82,32 @@ export class BlogsCommentsService implements IBlogsCommentsService {
       .getCount();
   }
 
-  async deleteById(commentId: number) {
-    const comment = await this.blogCommentRepository.findOneBy({
+  async deleteById(commentId: number, accountId: number) {
+    const existingComment = await this.blogCommentRepository.findOneBy({
       id: commentId,
+      account: {
+        id: accountId,
+      },
     });
-    if (comment) {
-      const partialComment: Partial<BlogComment> = {
-        deleted: true,
-      };
-      Object.assign(comment, partialComment);
-      await this.blogCommentRepository.save(comment);
+    if (existingComment) {
+      existingComment.deleted = true;
+      await this.blogCommentRepository.save(existingComment);
       return true;
     }
-    throw new Error('blog not found');
+    throw new Error('Comment not found or permission denied');
+  }
+
+  async update(updatedComment: IUpdateBlogCommentDto, accountId: number) {
+    const existingComment = await this.blogCommentRepository.findOneBy({
+      id: updatedComment.id,
+      account: {
+        id: accountId,
+      },
+    });
+    if (existingComment) {
+      Object.assign(existingComment, updatedComment);
+      return await this.blogCommentRepository.save(existingComment);
+    }
+    throw new Error('Comment not found or permission denied');
   }
 }

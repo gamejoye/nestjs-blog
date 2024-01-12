@@ -13,14 +13,11 @@ export class PlatformProfile {
   platformUserId: number;
 
   @Column()
-  name: string;
+  username: string;
 
   @Column({ name: 'avatar_url' })
   avatarUrl: string;
 
-  @Column({ name: 'create_time' })
-  createTime: string;
-
-  @Column({ name: 'edit_time' })
-  editTime?: string;
+  @Column({ name: 'access_token' })
+  accessToken: string;
 }

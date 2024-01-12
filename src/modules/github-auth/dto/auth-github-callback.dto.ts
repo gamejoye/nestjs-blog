@@ -18,12 +18,6 @@ export class IAuthGithubCallbackDto {
   @IsNotEmpty()
   readonly username: string;
 
-  readonly created_at: string;
-
-  @IsDateString()
-  @IsOptional()
-  readonly updated_at?: string;
-
   @IsString()
   readonly accessToken: string;
 
@@ -46,6 +40,4 @@ class IPhotoDto {
   username: 'gamejoye',
   profileUrl: 'https://github.com/gamejoye',
   photos: [ { value: 'https://avatars.githubusercontent.com/u/88575063?v=4' } ]
-  created_at: '2021-08-07T07:28:50Z',
-    updated_at: '2023-11-18T14:05:33Z'
  */

@@ -18,8 +18,11 @@ import { BlogsCommentsService } from '../blogs-comments/blogs-comments.service';
 import { Response } from 'express';
 import { setXTotalCount } from 'src/common/utils/response-transform';
 import { IUpdateBlogDto } from './dto/update-blog.dto';
-import { AdminAuthGuard } from 'src/common/guards/admin-token-auto.guard';
 import { IGetBlogsQueryDto } from './dto/get-blogs.dto';
+import { CheckAbilites } from '../casl/abilities.decorator';
+import { Action, Subject } from '../casl/abilitits.guard';
+import { JwtGuard } from '../auth/jwt.guard';
+import { AbilititsGuard } from '../casl/abilitits.guard';
 
 @Controller('blogs')
 export class BlogsController {
@@ -57,15 +60,16 @@ export class BlogsController {
   }
 
   @Post()
-  @UseGuards(AdminAuthGuard)
+  @CheckAbilites({ action: Action.Manage, subject: Subject.All })
+  @UseGuards(JwtGuard, AbilititsGuard)
   async addBlog(@Body() addBlogDto: IAddBlogDto) {
-    console.log('dto: ', addBlogDto);
     const blog = await this.blogService.add(addBlogDto);
     return blog;
   }
 
   @Put(':id')
-  @UseGuards(AdminAuthGuard)
+  @CheckAbilites({ action: Action.Manage, subject: Subject.All })
+  @UseGuards(JwtGuard, AbilititsGuard)
   async updateBlog(@Body() dto: IUpdateBlogDto) {
     console.log(dto);
     const blog = await this.blogService.update(dto);
@@ -73,7 +77,8 @@ export class BlogsController {
   }
 
   @Delete(':id')
-  @UseGuards(AdminAuthGuard)
+  @CheckAbilites({ action: Action.Manage, subject: Subject.All })
+  @UseGuards(JwtGuard, AbilititsGuard)
   async deleteBlog(@Param('id', ParseIntPipe) id: number) {
     const status = await this.blogService.deleteById(id);
     return status;

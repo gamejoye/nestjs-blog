@@ -1,8 +1,10 @@
+import { Role } from 'src/modules/permission-manage/entitits/role.entity';
 import { PlatformProfile } from 'src/modules/platform-profiles/entities/platform-profile.entity';
 import {
   Column,
   Entity,
   JoinColumn,
+  ManyToMany,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -11,6 +13,12 @@ import {
 export class Account {
   @PrimaryGeneratedColumn()
   id: number;
+
+  @Column()
+  username: string;
+
+  @Column({ name: 'password_hash' })
+  passwordHash: string;
 
   @OneToOne(() => PlatformProfile, { cascade: ['insert'] })
   @JoinColumn({ name: 'platform_profile_id' })
@@ -27,4 +35,7 @@ export class Account {
 
   @Column({ name: 'edit_time' })
   editTime?: string;
+
+  @ManyToMany(() => Role, (role) => role.accounts, { cascade: ['insert'] })
+  roles: Role[];
 }

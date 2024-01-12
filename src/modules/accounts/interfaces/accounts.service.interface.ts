@@ -9,4 +9,5 @@ export interface IAccountsService {
     platformUserId: number,
     platform: IPlatform,
   ): Promise<Account>;
+  getByUsername(userName: string): Promise<Account>;
 }

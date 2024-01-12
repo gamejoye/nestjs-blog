@@ -16,10 +16,9 @@ export class PlatformProfilesService implements IPlatformProfilesService {
     const partialProfile: Partial<PlatformProfile> = {
       platform: GITHUB,
       platformUserId: dto.id,
-      name: dto.username,
-      createTime: dto.created_at,
-      editTime: dto.updated_at,
+      username: dto.username,
       avatarUrl: dto.photos[0].value,
+      accessToken: dto.accessToken,
     };
     const profile = await this.platformProfileRepository.save(partialProfile);
     return profile;

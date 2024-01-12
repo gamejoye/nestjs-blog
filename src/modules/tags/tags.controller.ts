@@ -15,9 +15,12 @@ import { TagsService } from './tags.service';
 import { Response } from 'express';
 import { setXTotalCount } from 'src/common/utils/response-transform';
 import { IUpdateTagDto } from './dto/update-tag.dto';
-import { AdminAuthGuard } from 'src/common/guards/admin-token-auto.guard';
 import { IAddTagDto } from './dto/add-tag.dto';
 import { IGetPagingQueryDto } from 'src/common/types/base.dto';
+import { CheckAbilites } from '../casl/abilities.decorator';
+import { JwtGuard } from '../auth/jwt.guard';
+import { AbilititsGuard } from '../casl/abilitits.guard';
+import { Action, Subject } from '../casl/abilitits.guard';
 
 @Controller('tags')
 export class TagsController {
@@ -47,21 +50,24 @@ export class TagsController {
   }
 
   @Post()
-  @UseGuards(AdminAuthGuard)
+  @CheckAbilites({ action: Action.Manage, subject: Subject.All })
+  @UseGuards(JwtGuard, AbilititsGuard)
   async addTag(@Body() addTagDto: IAddTagDto) {
     const tag = await this.tagsService.add(addTagDto);
     return tag;
   }
 
   @Put(':id')
-  @UseGuards(AdminAuthGuard)
+  @CheckAbilites({ action: Action.Manage, subject: Subject.All })
+  @UseGuards(JwtGuard, AbilititsGuard)
   async updateTag(@Body() dto: IUpdateTagDto) {
     const tag = await this.tagsService.update(dto);
     return tag;
   }
 
   @Delete(':id')
-  @UseGuards(AdminAuthGuard)
+  @CheckAbilites({ action: Action.Manage, subject: Subject.All })
+  @UseGuards(JwtGuard, AbilititsGuard)
   async deleteTag(@Param('id', ParseIntPipe) id: number) {
     await this.tagsService.deleteById(id);
   }

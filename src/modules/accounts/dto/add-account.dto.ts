@@ -23,18 +23,14 @@ class IPlatformProfileForAddAccount {
 
   @IsString()
   @IsNotEmpty()
-  name: string;
+  username: string;
 
   @IsString()
   @IsNotEmpty()
   avatarUrl: string;
 
-  @IsDateString()
-  createTime: string;
-
-  @IsDateString()
-  @IsOptional()
-  editTime?: string;
+  @IsString()
+  accessToken: string;
 }
 
 export class IAddAcountDto {

@@ -7,7 +7,7 @@ import { RedisCliModule } from '../redis-cli/redis-cli.module';
 
 @Module({
   imports: [
-    PassportModule.register({ defaultStrategy: 'github' }),
+    PassportModule.register({ defaultStrategy: ['github'] }),
     AccountsModule,
     RedisCliModule,
   ],

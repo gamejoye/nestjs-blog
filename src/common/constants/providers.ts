@@ -5,4 +5,6 @@ export const FOLDER_REPOSITORY = 'folderRepository';
 export const INFORMATION_REPOSITORY = 'informationRepository';
 export const PLATFORM_PROFILE_REPOSITORY = 'platformProfileRepository';
 export const TAG_REPOSITORY = 'tagRepository';
+export const PERMISSION_REPOSITORY = 'permissionRepository';
+export const ROLE_REPOSITORY = 'roleRepository';
 export const DATA_SOURCE = 'dataSource';

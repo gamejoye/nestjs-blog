@@ -16,8 +16,11 @@ import { IAddFolderDto } from './dto/add-folder.dto';
 import { Response } from 'express';
 import { setXTotalCount } from 'src/common/utils/response-transform';
 import { IUpdateFolderDto } from './dto/update-folder.dto';
-import { AdminAuthGuard } from 'src/common/guards/admin-token-auto.guard';
 import { IGetPagingQueryDto } from 'src/common/types/base.dto';
+import { CheckAbilites } from '../casl/abilities.decorator';
+import { Action, Subject } from '../casl/abilitits.guard';
+import { JwtGuard } from '../auth/jwt.guard';
+import { AbilititsGuard } from '../casl/abilitits.guard';
 
 @Controller('folders')
 export class FoldersController {
@@ -47,21 +50,24 @@ export class FoldersController {
   }
 
   @Post()
-  @UseGuards(AdminAuthGuard)
+  @CheckAbilites({ action: Action.Manage, subject: Subject.All })
+  @UseGuards(JwtGuard, AbilititsGuard)
   async addFolder(@Body() addFolderDto: IAddFolderDto) {
     const folder = await this.foldersService.add(addFolderDto);
     return folder;
   }
 
   @Put(':id')
-  @UseGuards(AdminAuthGuard)
+  @CheckAbilites({ action: Action.Manage, subject: Subject.All })
+  @UseGuards(JwtGuard, AbilititsGuard)
   async updateFolder(@Body() updateFolderDto: IUpdateFolderDto) {
     const folder = await this.foldersService.update(updateFolderDto);
     return folder;
   }
 
   @Delete(':id')
-  @UseGuards(AdminAuthGuard)
+  @CheckAbilites({ action: Action.Manage, subject: Subject.All })
+  @UseGuards(JwtGuard, AbilititsGuard)
   async deleteFolder(@Param('id', ParseIntPipe) id: number) {
     await this.foldersService.deleteById(id);
   }

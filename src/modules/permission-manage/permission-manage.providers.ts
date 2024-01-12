@@ -1,21 +1,22 @@
 import {
-  ACCOUNT_REPOSITORY,
   DATA_SOURCE,
+  PERMISSION_REPOSITORY,
   ROLE_REPOSITORY,
 } from 'src/common/constants/providers';
 import { DataSource } from 'typeorm';
-import { Account } from './entities/account.entity';
-import { Role } from '../permission-manage/entitits/role.entity';
+import { Role } from './entitits/role.entity';
+import { Permission } from './entitits/permission.entity';
 
-export const accountsProviders = [
+export const permissionManageProviders = [
   {
     provide: ROLE_REPOSITORY,
     useFactory: (dataSource: DataSource) => dataSource.getRepository(Role),
     inject: [DATA_SOURCE],
   },
   {
-    provide: ACCOUNT_REPOSITORY,
-    useFactory: (dataSource: DataSource) => dataSource.getRepository(Account),
+    provide: PERMISSION_REPOSITORY,
+    useFactory: (dataSource: DataSource) =>
+      dataSource.getRepository(Permission),
     inject: [DATA_SOURCE],
   },
 ];
