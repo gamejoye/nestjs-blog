@@ -8,7 +8,7 @@ import {
 import { AccountsService } from './accounts.service';
 import { RedisCliService } from '../redis-cli/redis-cli.service';
 import { JwtGuard } from '../auth/jwt.guard';
-import { GetUser } from '../github-auth/decorators/get-user.decorator';
+import { GetUser } from '../auth/decorators/get-user.decorator';
 import { Account } from './entities/account.entity';
 
 @Controller('accounts')
