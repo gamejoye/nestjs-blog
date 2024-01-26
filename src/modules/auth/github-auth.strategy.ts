@@ -12,7 +12,7 @@ export class GithubStrategy extends PassportStrategy(Strategy) {
       clientID: config.githubClientId,
       clientSecret: config.githubClientSecret,
       callbackURL: config.githubCallbackUrl,
-      scope: ['user:email'],
+      proxy: true,
     });
   }
 

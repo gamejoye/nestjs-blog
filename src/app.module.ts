@@ -5,12 +5,10 @@ import {
   RequestMethod,
 } from '@nestjs/common';
 import { BlogsModule } from './modules/blogs/blogs.module';
-import { InformationModule } from './modules/information/information.module';
 import { FoldersModule } from './modules/folders/folders.module';
 import { TagsModule } from './modules/tags/tags.module';
 import { BlogsCommentsModule } from './modules/blogs-comments/blogs-comments.module';
 import { LoggerMiddleWare } from './common/middlewares/logger.middleware';
-import { GithubAuthModule } from './modules/github-auth/github-auth.module';
 import { AccountsModule } from './modules/accounts/accounts.module';
 import { RedisCliModule } from './modules/redis-cli/redis-cli.module';
 import { GithubAuthMiddleWare } from './common/middlewares/github-auth.middleware';
@@ -24,10 +22,8 @@ import { AuthModule } from './modules/auth/auth.module';
     BlogsCommentsModule,
     FoldersModule,
     TagsModule,
-    InformationModule,
     AccountsModule,
     RedisCliModule,
-    GithubAuthModule,
     EnvConfigModule,
     PermissionManageModule,
     AuthModule,
