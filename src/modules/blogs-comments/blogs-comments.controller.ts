@@ -17,7 +17,7 @@ import { JwtGuard } from '../auth/jwt.guard';
 import { AbilititsGuard } from '../casl/abilitits.guard';
 import { CheckAbilites } from '../casl/abilities.decorator';
 import { Action, Subject } from '../casl/abilitits.guard';
-import { GetUser } from '../github-auth/decorators/get-user.decorator';
+import { GetUser } from '../auth/decorators/get-user.decorator';
 import { Account } from '../accounts/entities/account.entity';
 import { IUpdateBlogCommentDto } from './dto/update.comment.dto';
 
