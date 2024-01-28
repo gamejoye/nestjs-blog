@@ -31,9 +31,9 @@ jobs:
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
           TARGET: "/usr/local/web/blog"
           EXCLUDE: "/dist/, /node_modules/"
-          SCRIPT_AFTER: |
-            cd /usr/local/web/blog
-            ls -al
-            echo $RSYNC_STDOUT
-            mv dist blog-server
-            pm2 restart NODE_ENV=production pm2 start blog-server/main.js --name blog-server
+          # SCRIPT_AFTER: |
+          #   cd /usr/local/web/blog
+          #   ls -al
+          #   echo $RSYNC_STDOUT
+          #   mv dist blog-server
+          #   pm2 restart NODE_ENV=production pm2 start blog-server/main.js --name blog-server
