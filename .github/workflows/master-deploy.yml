@@ -2,7 +2,7 @@ name: Build And Deploy To Aliyun Ecs
 
 on:
   push: 
-    branches: [master]
+    branches: [master, ci/cd]
   pull_request: 
     branches: [master]
 
