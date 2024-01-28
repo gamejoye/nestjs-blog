@@ -1,0 +1,60 @@
+name: Build And Deploy To Aliyun Ecs
+
+on:
+  push: 
+    branches: [master]
+  pull_request: 
+    branches: [master]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [20.x]
+    steps:
+    - uses: actions/checkout@v4
+    - name: Using Node.js ${{matrix.node-version}}
+      uses: actions/setup-node@v4.0.1
+      with:
+        node-version: ${{matrix.node-version}}
+    - name: Transfer .env.production file
+      run: |
+        echo "DATABASE_TYPE=${{secrets.DATABASE_TYPE}}" >> .env.production
+        echo "DATABASE_PORT=${{secrets.DATABASE_PORT}}" >> .env.production
+        echo "DATABASE_HOST=${{secrets.DATABASE_HOST}}" >> .env.production
+        echo "DATABASE_USERNAME=${{secrets.DATABASE_USERNAME}}" >> .env.production
+        echo "DATABASE_PASSWORD=${{secrets.DATABASE_PASSWORD}}" >> .env.production
+        echo "DATABASE_DATABASE=${{secrets.DATABASE_DATABASE}}" >> .env.production
+        echo "" >> .env.production
+        echo "SERVER_PORT=${{secrets.SERVER_PORT}}" >> .env.production
+        echo "SERVER_ORIGINS=${{secrets.SERVER_ORIGINS}}" >> .env.production
+        echo "" >> .env.production
+        echo "GITHUB_CLIENT_ID=${{secrets.CLIENT_ID_GITHUB}}" >> .env.production
+        echo "GITHUB_CLIENT_SECRET=${{secrets.CLIENT_SECRET_GITHUB}}" >> .env.production
+        echo "GITHUB_CALLBACK_URL=${{secrets.CALLBACK_URL_GITHUB}}" >> .env.production
+        echo "GITHUB_FRONT_END_CALLBACK_URL=${{secrets.FRONT_END_CALLBACK_URL_GITHUB}}" >> .env.production
+        echo "" >> .env.production
+        echo "REDIS_PORT=${{secrets.REDIS_PORT}}" >> .env.production
+        echo "REDIS_HOST=${{secrets.REDIS_HOST}}" >> .env.production
+        echo "REDIS_DB=${{secrets.REDIS_DB}}" >> .env.production
+        echo "" >> .env.production
+        echo "JWT_SECRET=${{secrets.JWT_SECRET}}" >> .env.production
+    - name: Deploy to Server
+      uses: easingthemes/ssh-deploy@main
+      with:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SOURCE: "."
+          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+          REMOTE_USER: ${{ secrets.REMOTE_USER }}
+          TARGET: "/usr/local/web/blog/blog-server"
+          EXCLUDE: "node_modules/"
+          SCRIPT_BEFORE: |
+            whoami
+            ls -al
+          SCRIPT_AFTER: |
+            cd /usr/local/web/blog/blog-server
+            cnpm install
+            cnpm run build
+            ls -al
+            pm2 start pm2.json --name blog-server
