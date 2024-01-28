@@ -29,11 +29,12 @@ jobs:
           SOURCE: "dist/"
           REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
-          TARGET: "/usr/local/web/blog"
-          EXCLUDE: "/dist/, /node_modules/"
-          # SCRIPT_AFTER: |
-          #   cd /usr/local/web/blog
-          #   ls -al
-          #   echo $RSYNC_STDOUT
-          #   mv dist blog-server
-          #   pm2 restart NODE_ENV=production pm2 start blog-server/main.js --name blog-server
+          TARGET: "/usr/local/web/blog/blog-server"
+          SCRIPT_BEFORE: |
+            whoami
+            ls ./ -al
+          SCRIPT_AFTER: |
+            cd /usr/local/web/blog
+            ls -al
+            echo $RSYNC_STDOUT
+            pm2 restart NODE_ENV=production pm2 start blog-server/main.js --name blog-server
