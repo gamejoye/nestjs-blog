@@ -3,6 +3,8 @@ import {
   Controller,
   Delete,
   Get,
+  HttpException,
+  HttpStatus,
   Param,
   ParseIntPipe,
   Post,
@@ -27,8 +29,8 @@ import { AbilititsGuard } from '../casl/abilitits.guard';
 @Controller('blogs')
 export class BlogsController {
   constructor(
-    private readonly blogService: BlogsService,
-    private readonly blogsCommentsService: BlogsCommentsService,
+    protected readonly blogService: BlogsService,
+    protected readonly blogsCommentsService: BlogsCommentsService,
   ) {}
 
   @Get()
@@ -55,32 +57,10 @@ export class BlogsController {
   @Get(':id')
   async getBlogById(@Param('id', ParseIntPipe) id: number) {
     const blog = await this.blogService.getById(id);
+    if (blog === null) {
+      throw new HttpException('文章不存在或者已经删除', HttpStatus.NOT_FOUND);
+    }
     blog.commentsCount = await this.blogsCommentsService.countByBlogId(blog.id);
     return blog;
-  }
-
-  @Post()
-  @CheckAbilites({ action: Action.Manage, subject: Subject.All })
-  @UseGuards(JwtGuard, AbilititsGuard)
-  async addBlog(@Body() addBlogDto: IAddBlogDto) {
-    const blog = await this.blogService.add(addBlogDto);
-    return blog;
-  }
-
-  @Put(':id')
-  @CheckAbilites({ action: Action.Manage, subject: Subject.All })
-  @UseGuards(JwtGuard, AbilititsGuard)
-  async updateBlog(@Body() dto: IUpdateBlogDto) {
-    console.log(dto);
-    const blog = await this.blogService.update(dto);
-    return blog;
-  }
-
-  @Delete(':id')
-  @CheckAbilites({ action: Action.Manage, subject: Subject.All })
-  @UseGuards(JwtGuard, AbilititsGuard)
-  async deleteBlog(@Param('id', ParseIntPipe) id: number) {
-    const status = await this.blogService.deleteById(id);
-    return status;
   }
 }
