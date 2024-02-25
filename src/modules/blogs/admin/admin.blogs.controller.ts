@@ -71,7 +71,6 @@ export class AdminBlogsController extends BlogsController {
   @Put(':id')
   @CheckAbilites({ action: Action.Manage, subject: Subject.All })
   async updateBlog(@Body() dto: IUpdateBlogDto) {
-    console.log(dto);
     const blog = await this.blogService.update(dto);
     return blog;
   }
@@ -79,7 +78,7 @@ export class AdminBlogsController extends BlogsController {
   @Delete(':id')
   @CheckAbilites({ action: Action.Manage, subject: Subject.All })
   async deleteBlog(@Param('id', ParseIntPipe) id: number) {
-    const status = await this.blogService.deleteById(id);
-    return status;
+    await this.blogService.deleteById(id);
+    return { id };
   }
 }
