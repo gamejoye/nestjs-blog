@@ -24,7 +24,7 @@ export class PermissionManageService
     this.loadAll();
   }
   async getPermissionsByAccountId(accountId: number): Promise<Permission[]> {
-    console.log(this.account2RoleMap, this.role2permissionMap);
+    // console.log(this.account2RoleMap, this.role2permissionMap);
     const roles = await this.getRolesByAccountId(accountId);
     const permissions = (
       await Promise.all(
