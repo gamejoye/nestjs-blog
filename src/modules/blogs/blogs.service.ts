@@ -20,8 +20,17 @@ export class BlogsService implements IBlogService {
     const { _sort: sort, _order: order } = paingQuery;
     const query = this.blogRepository
       .createQueryBuilder('blog')
-      .leftJoinAndSelect('blog.tags', 'tag')
-      .leftJoinAndSelect('blog.folders', 'folder');
+      .leftJoinAndSelect('blog.tags', 'tag', 'tag.deleted = :deleted', {
+        deleted: false,
+      })
+      .leftJoinAndSelect(
+        'blog.folders',
+        'folder',
+        'folder.deleted = :deleted',
+        {
+          deleted: false,
+        },
+      );
 
     query.andWhere('blog.deleted = :deleted', { deleted: false });
     if (paingQuery.q !== undefined) {
@@ -29,9 +38,11 @@ export class BlogsService implements IBlogService {
     }
     if (paingQuery.folder !== undefined) {
       query.andWhere(`folder.name = :folder`, { folder: paingQuery.folder });
+      query.andWhere('folder.deleted = :deleted', { deleted: false });
     }
     if (paingQuery.tag !== undefined) {
       query.andWhere(`tag.name = :tag`, { tag: paingQuery.tag });
+      query.andWhere('tag.deleted = :deleted', { deleted: false });
     }
     query.orderBy(`blog.${sort}`, order).skip(skip).take(amount);
     return await query.getMany();
@@ -49,9 +60,11 @@ export class BlogsService implements IBlogService {
     }
     if (query.folder !== undefined) {
       select.andWhere('folder.name = :folder', { folder: query.folder });
+      select.andWhere('folder.deleted = :deleted', { deleted: false });
     }
     if (query.tag !== undefined) {
       select.andWhere('tag.name = :tag', { tag: query.tag });
+      select.andWhere('tag.deleted = :deleted', { deleted: false });
     }
     return await select.getCount();
   }
