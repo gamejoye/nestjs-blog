@@ -74,5 +74,6 @@ export class AdminTagsController extends TagsController {
   @CheckAbilites({ action: Action.Manage, subject: Subject.All })
   async deleteTag(@Param('id', ParseIntPipe) id: number) {
     await this.tagsService.deleteById(id);
+    return { id };
   }
 }
