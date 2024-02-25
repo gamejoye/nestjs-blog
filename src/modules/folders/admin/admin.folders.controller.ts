@@ -26,7 +26,7 @@ import { IGetPagingQueryDto } from 'src/common/types/base.dto';
 import { Response } from 'express';
 
 @Controller('admin/folders')
-@UseGuards(JwtGuard, AbilititsGuard)
+// @UseGuards(JwtGuard, AbilititsGuard)
 export class AdminFoldersController extends FoldersController {
   constructor(protected readonly foldersService: AdminFoldersService) {
     super(foldersService);
@@ -74,5 +74,6 @@ export class AdminFoldersController extends FoldersController {
   @CheckAbilites({ action: Action.Manage, subject: Subject.All })
   async deleteFolder(@Param('id', ParseIntPipe) id: number) {
     await this.foldersService.deleteById(id);
+    return { id };
   }
 }
