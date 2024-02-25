@@ -33,6 +33,7 @@ export class AdminFoldersController extends FoldersController {
   }
 
   @Get()
+  @CheckAbilites({ action: Action.Manage, subject: Subject.All })
   async getFoldersByPaging(
     @Query() query: IGetPagingQueryDto,
     @Res({ passthrough: true }) res: Response,
@@ -42,12 +43,14 @@ export class AdminFoldersController extends FoldersController {
   }
 
   @Get('count')
+  @CheckAbilites({ action: Action.Manage, subject: Subject.All })
   async getBlogsTotoalCount() {
     const total = await super.getBlogsTotoalCount();
     return total;
   }
 
   @Get(':id')
+  @CheckAbilites({ action: Action.Manage, subject: Subject.All })
   async getFolderById(@Param('id', ParseIntPipe) id: number) {
     const folder = await super.getFolderById(id);
     return folder;
